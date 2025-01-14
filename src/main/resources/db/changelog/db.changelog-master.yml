@@ -7,3 +7,7 @@ databaseChangeLog:
       file: db/changelog/v-0.1.0/changeset/20250114_create_table_tasks.sql
   - include:
       file: db/changelog/v-0.1.0/changeset/20250114_create_table_comments.sql
+  - include:
+      file: db/changelog/v-0.1.0/data/20250114_data_users.sql
+  - include:
+      file: db/changelog/v-0.1.0/data/20250114_data_tasks.sql

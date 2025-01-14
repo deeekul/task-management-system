@@ -18,4 +18,4 @@ create table users
         ((ARRAY ['USER':: character varying, 'ADMIN':: character varying])::text[]))
 );
 
-ALTER SEQUENCE users_sequence RESTART WITH 6;
+ALTER SEQUENCE users_sequence RESTART WITH 11;

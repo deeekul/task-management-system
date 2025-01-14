@@ -25,3 +25,5 @@ create table tasks
         constraint tasks_assignee_id_fk
             references users
 );
+
+ALTER SEQUENCE tasks_sequence RESTART WITH 11;
