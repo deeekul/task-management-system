@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
 public record ChangePasswordRequest(
         @NotBlank(message = "Текущий пароль не должен быть пустым")
         @JsonProperty("old_password")
+        @Schema(description = "Текущий пароль", example = "p@ssw0rd")
         String oldPassword,
 
         @Size(min = 8, max = 20, message = "Новый пароль должен содержать от 8 до 20 символов")
@@ -16,6 +17,7 @@ public record ChangePasswordRequest(
 
         @Size(min = 8, max = 20, message = "Пароль для подтверждения должен содержать от 8 до 20 символов")
         @JsonProperty("confirmation_password")
+        @Schema(description = "Пароль для подтверждения", example = "p@ssw0rd")
         String confirmationPassword
 ) {
 }

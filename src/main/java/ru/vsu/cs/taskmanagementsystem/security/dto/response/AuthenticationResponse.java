@@ -8,9 +8,11 @@ import lombok.Builder;
 public record AuthenticationResponse(
 
         @JsonProperty("access_token")
+        @Schema(description = "Access Token")
         String accessToken,
 
         @JsonProperty("refresh_token")
+        @Schema(description = "Refresh Token")
         String refreshToken
 ) {
 }
