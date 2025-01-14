@@ -6,7 +6,8 @@ create sequence tasks_sequence;
 
 create table tasks
 (
-    id          bigint primary key default nextval('tasks_sequence'),
+    id          bigint
+        primary key default nextval('tasks_sequence'),
     title       varchar(255),
     description text,
     status      varchar(255)

@@ -6,7 +6,8 @@ create sequence comments_sequence;
 
 create table comments
 (
-    id           bigint primary key default nextval('comments_sequence'),
+    id           bigint
+        primary key default nextval('comments_sequence'),
     text         text not null,
     created_date timestamp not null,
     user_id      bigint

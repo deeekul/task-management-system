@@ -16,7 +16,7 @@ create table tokens
             check ((token_type)::text = 'BEARER'::text),
     expired    boolean not null,
     revoked    boolean not null,
-    user_id   bigint
+    user_id    bigint
         constraint fk_user
             references users ON DELETE CASCADE
 );
