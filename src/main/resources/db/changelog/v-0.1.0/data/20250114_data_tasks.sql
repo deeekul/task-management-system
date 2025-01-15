@@ -4,7 +4,7 @@
 
 -- tasks data
 
-INSERT INTO tasks (id, title, description, status, priority, author_id, assignee_id)
+INSERT INTO tasks(id, title, description, status, priority, author_id, assignee_id)
 
 VALUES (1, 'Разработка новой функции поиска', 'Реализовать новый алгоритм поиска по базе данных', 'PENDING', 'HIGH', 2, 3),
        (2, 'Рефакторинг модуля авторизации', 'Улучшить производительность и безопасность модуля авторизации', 'IN_PROGRESS', 'MEDIUM', 2, 4),

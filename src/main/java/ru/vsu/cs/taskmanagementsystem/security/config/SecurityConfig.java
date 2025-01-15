@@ -15,6 +15,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+import static ru.vsu.cs.taskmanagementsystem.security.entity.Role.ADMIN;
+import static ru.vsu.cs.taskmanagementsystem.security.entity.Role.USER;
 
 
 @EnableWebSecurity
@@ -33,6 +35,9 @@ public class SecurityConfig {
             "/api/register",
             "/api/authenticate",
             "/api/refresh-token",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/api/**"
     };
 
     @Bean
@@ -43,6 +48,12 @@ public class SecurityConfig {
                         auth
                                 .requestMatchers(UNRESTRICTED_URLS)
                                 .permitAll()
+                                /*.requestMatchers(HttpMethod.GET,"/api/users", "/api/users/**")
+                                .hasAnyRole(ADMIN.name(), USER.name())
+                                .requestMatchers(HttpMethod.PATCH,"/api/users/change-password")
+                                .hasAnyRole(ADMIN.name(), USER.name())
+                                .requestMatchers(HttpMethod.DELETE, "/api/users/{id}")
+                                .hasAnyRole(ADMIN.name())*/ // TODO
                                 .anyRequest()
                                 .authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))

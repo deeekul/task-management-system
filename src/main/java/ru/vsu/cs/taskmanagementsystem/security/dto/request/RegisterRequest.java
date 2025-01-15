@@ -9,6 +9,7 @@ import ru.vsu.cs.taskmanagementsystem.security.entity.Role;
 
 @Builder
 public record RegisterRequest(
+
         @Size(min = 3, max = 15, message = "Имя пользователя  должно содержать от 3 до 15 символов")
         @Schema(description = "Имя пользователя", example = "Иван")
         String firstName,

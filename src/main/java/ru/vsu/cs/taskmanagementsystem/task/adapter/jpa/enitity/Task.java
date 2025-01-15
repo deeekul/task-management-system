@@ -1,13 +1,11 @@
 package ru.vsu.cs.taskmanagementsystem.task.adapter.jpa.enitity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import ru.vsu.cs.taskmanagementsystem.task.adapter.jpa.TaskPriority;
-import ru.vsu.cs.taskmanagementsystem.task.adapter.jpa.TaskStatus;
+import lombok.*;
+import ru.vsu.cs.taskmanagementsystem.task.adapter.rest.dto.request.TaskUpdateRequest;
+import ru.vsu.cs.taskmanagementsystem.task.comment.adapter.jpa.entity.Comment;
+import ru.vsu.cs.taskmanagementsystem.task.adapter.jpa.enitity.temp.TaskPriority;
+import ru.vsu.cs.taskmanagementsystem.task.adapter.jpa.enitity.temp.TaskStatus;
 import ru.vsu.cs.taskmanagementsystem.user.adapter.jpa.entity.User;
 
 import java.util.List;

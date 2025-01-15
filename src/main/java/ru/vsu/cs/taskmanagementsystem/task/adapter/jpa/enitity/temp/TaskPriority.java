@@ -1,4 +1,4 @@
-package ru.vsu.cs.taskmanagementsystem.task.adapter.jpa;
+package ru.vsu.cs.taskmanagementsystem.task.adapter.jpa.enitity.temp;
 
 import lombok.Getter;
 

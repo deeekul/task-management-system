@@ -17,8 +17,8 @@ import ru.vsu.cs.taskmanagementsystem.security.dto.request.RegisterRequest;
 import ru.vsu.cs.taskmanagementsystem.security.service.AuthenticationService;
 import ru.vsu.cs.taskmanagementsystem.util.ErrorMessage;
 
-import javax.naming.AuthenticationException;
 import java.io.IOException;
+
 import static ru.vsu.cs.taskmanagementsystem.util.ValidationErrorsUtil.returnErrorsToClient;
 
 
@@ -39,11 +39,11 @@ public class AuthenticationController implements AuthenticationApi {
                     .body(new ErrorMessage(errorsMessage, 400));
         }
         return ResponseEntity.ok(authService.register(request));
-}
+    }
 
     @PostMapping("/authenticate")
     public ResponseEntity<?> authenticate(@Valid @RequestBody AuthenticationRequest request,
-                                          BindingResult bindingResult) throws AuthenticationException {
+                                          BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             String errorsMessage = returnErrorsToClient(bindingResult);
             return ResponseEntity

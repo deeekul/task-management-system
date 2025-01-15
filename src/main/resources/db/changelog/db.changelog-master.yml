@@ -11,3 +11,5 @@ databaseChangeLog:
       file: db/changelog/v-0.1.0/data/20250114_data_users.sql
   - include:
       file: db/changelog/v-0.1.0/data/20250114_data_tasks.sql
+  - include:
+      file: db/changelog/v-0.1.0/data/20250115_data_comments.sql

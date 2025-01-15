@@ -11,6 +11,8 @@ public interface UserMapper {
 
     UserResponse map(User user);
 
+    User map(UserResponse userResponse);
+
     default UserDetails mapToUserDetails(User user) {
         return UserDetailsImpl.builder()
                 .user(user)

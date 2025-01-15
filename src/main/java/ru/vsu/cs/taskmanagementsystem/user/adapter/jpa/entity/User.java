@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.vsu.cs.taskmanagementsystem.security.entity.Role;
 import ru.vsu.cs.taskmanagementsystem.security.entity.token.Token;
-import ru.vsu.cs.taskmanagementsystem.task.adapter.jpa.enitity.Comment;
+import ru.vsu.cs.taskmanagementsystem.task.comment.adapter.jpa.entity.Comment;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.jpa.enitity.Task;
 
 import java.util.List;

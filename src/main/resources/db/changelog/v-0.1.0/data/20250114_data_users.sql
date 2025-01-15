@@ -4,7 +4,7 @@
 
 -- users data
 
-INSERT INTO users (id, first_name, last_name, login, password,  role)
+INSERT INTO users(id, first_name, last_name, login, password,  role)
 
 VALUES (1, 'Иванов', 'Иван', 'ivanov_i', '$2a$10$7wrtwctbL63wGqxCZvRv6ulQVkHrAgdHNiP3USKFE9V7Tj9kHnqC2', 'ADMIN'),
        (2, 'Малышев', 'Александр', 'malyshev_a', '$2a$10$KoT4Ctc7aheAEmBZFDH0TOQVOSNtm08qNkzm41pUqJREpm4xSYicS', 'USER'),
