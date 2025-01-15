@@ -52,12 +52,14 @@ public class TaskService {
 
     public Page<TaskResponse> getAllTasksByAuthorId(Long authorId, TaskStatus status,
                                                     TaskPriority priority, Pageable pageable) {
+        userService.getUserById(authorId);
         return taskRepository.findAllByAuthorId(authorId, status, priority, pageable)
                 .map(taskMapper::map);
     }
 
     public Page<TaskResponse> getAllTasksByAssigneeId(Long assigneeId, TaskStatus status,
                                                       TaskPriority priority,Pageable pageable) {
+        userService.getUserById(assigneeId);
         return taskRepository.findAllByAssigneeId(assigneeId, status, priority, pageable)
                 .map(taskMapper::map);
     }
@@ -111,25 +113,25 @@ public class TaskService {
 
     private void updateTaskFields(Task task, TaskUpdateRequest request) {
         if (request.title() != null) {
-            task.setTitle(request.getTitle());
+            task.setTitle(request.title());
         }
         if (request.description() != null) {
-            task.setDescription(request.getDescription());
+            task.setDescription(request.description());
         }
         if (request.status() != null) {
-            task.setStatus(request.getStatus());
+            task.setStatus(request.status());
         }
         if (request.priority() != null) {
-            task.setPriority(request.getPriority());
+            task.setPriority(request.priority());
         }
         if (request.assigneeId() != null) {
-            var newAssignee = userMapper.map(userService.getUserById(request.getAssigneeId()));
+            var newAssignee = userMapper.map(userService.getUserById(request.assigneeId()));
             task.setAssignee(newAssignee);
         }
     }
 
     private void checkUserAccess(Task task, User user) {
-        if (!user.getRole().name().equals("ADMIN") &&
+        if (!user.getRole().name().equals("ADMIN") ||
                 !task.getAssignee().getId().equals(user.getId())) {
             throw new UnauthorizedTaskAccessException("Вы не имеете право изменять эту задачу!", HttpStatus.FORBIDDEN);
         }

@@ -3,11 +3,9 @@ package ru.vsu.cs.taskmanagementsystem.task.adapter.rest.dto.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
-import lombok.Getter;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.jpa.enitity.temp.TaskPriority;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.jpa.enitity.temp.TaskStatus;
 
-@Getter
 @Builder
 public record TaskUpdateRequest(
 
