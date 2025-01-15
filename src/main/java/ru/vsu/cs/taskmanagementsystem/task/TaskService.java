@@ -50,17 +50,17 @@ public class TaskService {
         return taskMapper.map(task);
     }
 
-    public Page<TaskResponse> getAllTasksByAuthorId(Long authorId, TaskStatus status,
+    public Page<TaskResponse> getAllTasksByAuthorId(Long id, TaskStatus status,
                                                     TaskPriority priority, Pageable pageable) {
-        userService.getUserById(authorId);
-        return taskRepository.findAllByAuthorId(authorId, status, priority, pageable)
+        userService.getUserById(id);
+        return taskRepository.findAllByAuthorId(id, status, priority, pageable)
                 .map(taskMapper::map);
     }
 
-    public Page<TaskResponse> getAllTasksByAssigneeId(Long assigneeId, TaskStatus status,
+    public Page<TaskResponse> getAllTasksByAssigneeId(Long id, TaskStatus status,
                                                       TaskPriority priority,Pageable pageable) {
-        userService.getUserById(assigneeId);
-        return taskRepository.findAllByAssigneeId(assigneeId, status, priority, pageable)
+        userService.getUserById(id);
+        return taskRepository.findAllByAssigneeId(id, status, priority, pageable)
                 .map(taskMapper::map);
     }
 

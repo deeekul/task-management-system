@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+import ru.vsu.cs.taskmanagementsystem.user.adapter.jpa.entity.User;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 import static ru.vsu.cs.taskmanagementsystem.security.entity.Role.ADMIN;
@@ -36,8 +37,7 @@ public class SecurityConfig {
             "/api/authenticate",
             "/api/refresh-token",
             "/swagger-ui/**",
-            "/v3/api-docs/**",
-            "/api/**"
+            "/v3/api-docs/**"
     };
 
     @Bean
@@ -48,12 +48,25 @@ public class SecurityConfig {
                         auth
                                 .requestMatchers(UNRESTRICTED_URLS)
                                 .permitAll()
-                                /*.requestMatchers(HttpMethod.GET,"/api/users", "/api/users/**")
+                                .requestMatchers(HttpMethod.GET,"/api/users", "/api/users/**")
                                 .hasAnyRole(ADMIN.name(), USER.name())
                                 .requestMatchers(HttpMethod.PATCH,"/api/users/change-password")
                                 .hasAnyRole(ADMIN.name(), USER.name())
                                 .requestMatchers(HttpMethod.DELETE, "/api/users/{id}")
-                                .hasAnyRole(ADMIN.name())*/ // TODO
+                                .hasRole(ADMIN.name())
+
+                                .requestMatchers(HttpMethod.GET, "/api/tasks", "api/tasks/{id}")
+                                .hasAnyRole(ADMIN.name(), USER.name())// TODO не работают роли, исправить и протестить
+//                                .requestMatchers(HttpMethod.GET, "/api/tasks/**")
+//                                .hasRole(ADMIN.name())
+//                                .requestMatchers(HttpMethod.POST, "/api/tasks/{id}/comments")
+//                                .hasAnyRole(ADMIN.name(), USER.name())
+//                                .requestMatchers(HttpMethod.POST, "/api/tasks")
+//                                .hasRole(ADMIN.name())
+//                                .requestMatchers(HttpMethod.POST, "/api/tasks/{id}")
+//                                .hasAnyRole(ADMIN.name(), USER.name())
+//                                .requestMatchers(HttpMethod.DELETE, "/api/tasks/{id}")
+//                                .hasRole(ADMIN.name())
                                 .anyRequest()
                                 .authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))

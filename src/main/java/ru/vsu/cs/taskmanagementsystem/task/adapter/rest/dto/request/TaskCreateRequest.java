@@ -25,11 +25,11 @@ public record TaskCreateRequest(
         @Schema(description = "Приоритет задачи", example = "HIGH")
         TaskPriority priority,
 
-        @Schema(description = "Автор задачи")
-        UserRequest author,
+        @Schema(description = "Идентификатор автора задачи")
+        Long authorId,
 
-        @Schema(description = "Исполнитель задачи")
-        UserRequest assignee,
+        @Schema(description = "Идентификатор исполнителя задачи")
+        Long assigneeId,
 
         @Schema(description = "Комментарии к задаче")
         List<CommentRequest> comments) {
