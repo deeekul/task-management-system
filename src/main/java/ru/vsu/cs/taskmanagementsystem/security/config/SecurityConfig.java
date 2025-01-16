@@ -18,7 +18,6 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 import static ru.vsu.cs.taskmanagementsystem.security.entity.Role.ADMIN;
 import static ru.vsu.cs.taskmanagementsystem.security.entity.Role.USER;
 
-
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableMethodSecurity
@@ -53,7 +52,6 @@ public class SecurityConfig {
                                 .hasAnyAuthority(ADMIN.name(), USER.name())
                                 .requestMatchers(HttpMethod.DELETE, "/api/users/{id}")
                                 .hasAuthority(ADMIN.name())
-
                                 .requestMatchers(HttpMethod.GET, "/api/tasks", "api/tasks/{id}")
                                 .hasAnyAuthority(ADMIN.name(), USER.name())
                                 .requestMatchers(HttpMethod.GET, "/api/tasks/**")
