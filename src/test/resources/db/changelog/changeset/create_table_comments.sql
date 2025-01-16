@@ -15,5 +15,5 @@ create table comments
             references users,
     task_id      bigint
         constraint comments_task_id_fk
-            references tasks
+            references tasks ON DELETE CASCADE
 );

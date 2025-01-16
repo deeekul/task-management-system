@@ -59,8 +59,8 @@ class AuthenticationControllerTest {
     void register_whenValidRegisterRequest_thenStatusOk() throws Exception {
         // given
         var registerRequest = new RegisterRequest(
-                "Иванов",
                 "Иван",
+                "Иванов",
                 "ivanov_i",
                 "p@ssw0rd",
                 USER
@@ -83,8 +83,8 @@ class AuthenticationControllerTest {
     void register_whenInvalidRegisterRequest_thenStatusBadRequest() throws Exception {
         // given
         var registerRequest = new RegisterRequest(
-                "Иванов",
                 "Иван",
+                "Иванов",
                 "ivanov_i",
                 "pass",
                 USER
@@ -107,8 +107,8 @@ class AuthenticationControllerTest {
     void authenticate_whenValidAuthenticationRequest_thenStatusOk() throws Exception {
         // given
         var registerRequest = new RegisterRequest(
-                "Иванов",
                 "Иван",
+                "Иванов",
                 "ivanov_i",
                 "p@ssw0rd",
                 USER
@@ -167,8 +167,8 @@ class AuthenticationControllerTest {
     void authenticate_whenInvalidPasswordInAuthRequest_thenStatusBadRequest() throws Exception {
         // given
         var registerRequest = new RegisterRequest(
-                "Иванов",
                 "Иван",
+                "Иванов",
                 "ivanov_i",
                 "p@ssw0rd",
                 USER
@@ -201,8 +201,8 @@ class AuthenticationControllerTest {
     void refreshToken_whenValidRequest_thenStatusOk() throws Exception {
         // given
         var registerRequest = new RegisterRequest(
-                "Иванов",
                 "Иван",
+                "Иванов",
                 "ivanov_i",
                 "p@ssw0rd",
                 USER

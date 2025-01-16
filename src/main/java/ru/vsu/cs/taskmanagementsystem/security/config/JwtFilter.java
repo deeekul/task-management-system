@@ -16,7 +16,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import ru.vsu.cs.taskmanagementsystem.security.entity.token.TokenRepository;
 import ru.vsu.cs.taskmanagementsystem.security.service.JwtService;
 
-
 import java.io.IOException;
 
 @RequiredArgsConstructor

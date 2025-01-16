@@ -1,6 +1,5 @@
 package ru.vsu.cs.taskmanagementsystem.task.comment.adapter;
 
-
 import org.mapstruct.Mapper;
 import ru.vsu.cs.taskmanagementsystem.task.comment.adapter.jpa.entity.Comment;
 import ru.vsu.cs.taskmanagementsystem.task.comment.adapter.rest.dto.request.CommentRequest;

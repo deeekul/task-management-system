@@ -8,9 +8,7 @@ create table tokens
 (
     id         bigint
         primary key default nextval('tokens_sequence'),
-    token      varchar(255)
-        constraint unique_token
-            unique,
+    token      varchar(255),
     token_type varchar(255)
         constraint token_type_check
             check ((token_type)::text = 'BEARER'::text),

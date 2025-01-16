@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.vsu.cs.taskmanagementsystem.user.exception.InvalidPasswordException;
+import ru.vsu.cs.taskmanagementsystem.user.exception.UnauthorizedUserAccessException;
 import ru.vsu.cs.taskmanagementsystem.user.exception.UserNotFoundException;
 import ru.vsu.cs.taskmanagementsystem.util.ErrorMessage;
 
@@ -27,5 +28,14 @@ public class UserExceptionHandler {
                 .errorCode(ex.getStatus().value())
                 .build(),
                 HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UnauthorizedUserAccessException.class)
+    public ResponseEntity<ErrorMessage> handleException(UnauthorizedUserAccessException ex) {
+        return new ResponseEntity<>(ErrorMessage.builder()
+                .errorMessage(ex.getMessage())
+                .errorCode(ex.getStatus().value())
+                .build(),
+                HttpStatus.FORBIDDEN);
     }
 }

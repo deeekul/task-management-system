@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.vsu.cs.taskmanagementsystem.security.entity.Role;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.TaskMapper;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.jpa.TaskRepository;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.jpa.enitity.Task;
@@ -25,6 +26,7 @@ import ru.vsu.cs.taskmanagementsystem.user.adapter.UserMapper;
 import ru.vsu.cs.taskmanagementsystem.user.adapter.jpa.entity.User;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Service
@@ -45,22 +47,24 @@ public class TaskService {
                 .map(taskMapper::map);
     }
 
-    public TaskResponse getTaskById(Long taskId) {
+    public TaskResponse getTaskById(Long taskId, Principal connectedUser) {
         var task = findTaskByIdOrThrowException(taskId);
+        var user = getUserFromPrincipal(connectedUser);
+        checkTaskAccess(task, user);
         return taskMapper.map(task);
     }
 
-    public Page<TaskResponse> getAllTasksByAuthorId(Long id, TaskStatus status,
+    public Page<TaskResponse> getAllTasksByAuthorId(Long authorId, TaskStatus status,
                                                     TaskPriority priority, Pageable pageable) {
-        userService.getUserById(id);
-        return taskRepository.findAllByAuthorId(id, status, priority, pageable)
+        userService.getUserById(authorId);
+        return taskRepository.findAllByAuthorId(authorId, status, priority, pageable)
                 .map(taskMapper::map);
     }
 
-    public Page<TaskResponse> getAllTasksByAssigneeId(Long id, TaskStatus status,
-                                                      TaskPriority priority,Pageable pageable) {
-        userService.getUserById(id);
-        return taskRepository.findAllByAssigneeId(id, status, priority, pageable)
+    public Page<TaskResponse> getAllTasksByAssigneeId(Long assigneeId, TaskStatus status,
+                                                      TaskPriority priority, Pageable pageable) {
+        userService.getUserById(assigneeId);
+        return taskRepository.findAllByAssigneeId(assigneeId, status, priority, pageable)
                 .map(taskMapper::map);
     }
 
@@ -69,37 +73,50 @@ public class TaskService {
         return taskMapper.map(task);
     }
 
-    public TaskResponse createTask(TaskCreateRequest taskRequest) {
+    @Transactional
+    public TaskResponse createTask(TaskCreateRequest taskRequest, Principal connectedUser) {
+        var author = userService.getUserById(taskRequest.authorId());
+        var assignee = userService.getUserById(taskRequest.assigneeId());
+
         var task = taskMapper.map(taskRequest);
+        task.setAuthor(userMapper.map(author));
+        task.setAssignee(userMapper.map(assignee));
         var savedTask = taskRepository.save(task);
 
+        var comments = taskRequest.comments();
+        if (!comments.isEmpty()) {
+            for (var commentRequest : comments) {
+                addCommentToTask(savedTask.getId(), commentRequest, connectedUser);
+            }
+        }
         return taskMapper.map(savedTask);
     }
 
-    @Transactional
     public TaskResponse addCommentToTask(Long id, CommentRequest commentRequest, Principal connectedUser) {
         var task = findTaskByIdOrThrowException(id);
-        var login = (String) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
-        var user = userMapper.map(userService.getUserByLogin(login));
+        var user = getUserFromPrincipal(connectedUser);
+        checkTaskAccess(task, user);
 
-        checkUserAccess(task, user);
         var comment = Comment.builder()
                 .text(commentRequest.text())
+                .createdDate(LocalDateTime.now())
                 .task(task)
                 .user(user)
                 .build();
-
         commentRepository.save(comment);
+
+        task.addComment(comment);
+        taskRepository.save(task);
+
         return taskMapper.map(task);
     }
 
     @Transactional
     public TaskResponse updateTaskById(Long id, TaskUpdateRequest taskUpdateRequest, Principal connectedUser) {
         var task = findTaskByIdOrThrowException(id);
-        var login = (String) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
-        var user = userMapper.map(userService.getUserByLogin(login));
+        var user = getUserFromPrincipal(connectedUser);
 
-        checkUserAccess(task, user);
+        checkTaskAccess(task, user);
         updateTaskFields(task, taskUpdateRequest);
 
         taskRepository.save(task);
@@ -130,10 +147,15 @@ public class TaskService {
         }
     }
 
-    private void checkUserAccess(Task task, User user) {
-        if (!user.getRole().name().equals("ADMIN") ||
-                !task.getAssignee().getId().equals(user.getId())) {
-            throw new UnauthorizedTaskAccessException("Вы не имеете право изменять эту задачу!", HttpStatus.FORBIDDEN);
+    private User getUserFromPrincipal(Principal connectedUser) {
+        var login = (String) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        return userMapper.map(userService.getUserByLogin(login));
+    }
+
+    private void checkTaskAccess(Task task, User connectedUser) {
+        if (!connectedUser.getRole().equals(Role.ADMIN) && !task.getAssignee().getId().equals(connectedUser.getId())) {
+            throw new UnauthorizedTaskAccessException(
+                    "Вы не имеете доступа к этой задаче!", HttpStatus.FORBIDDEN);
         }
     }
 

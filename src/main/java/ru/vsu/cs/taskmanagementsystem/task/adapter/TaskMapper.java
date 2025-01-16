@@ -11,4 +11,6 @@ public interface TaskMapper {
     Task map(TaskCreateRequest taskRequest);
 
     TaskResponse map(Task task);
+
+    Task map(TaskResponse taskResponse);
 }

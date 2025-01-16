@@ -18,6 +18,7 @@ import ru.vsu.cs.taskmanagementsystem.task.adapter.rest.dto.request.TaskUpdateRe
 import ru.vsu.cs.taskmanagementsystem.task.adapter.rest.dto.response.TaskResponse;
 import ru.vsu.cs.taskmanagementsystem.task.comment.adapter.rest.dto.request.CommentRequest;
 import ru.vsu.cs.taskmanagementsystem.util.ErrorMessage;
+
 import java.security.Principal;
 
 import static org.springframework.http.ResponseEntity.ok;
@@ -42,8 +43,9 @@ public class TaskController implements TaskApi {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TaskResponse> getTaskById(@PathVariable("id") Long id) {
-        return ok(taskService.getTaskById(id));
+    public ResponseEntity<TaskResponse> getTaskById(@PathVariable("id") Long id,
+                                                    Principal connectedUser) {
+        return ok(taskService.getTaskById(id, connectedUser));
     }
 
     @GetMapping("/title")
@@ -77,7 +79,8 @@ public class TaskController implements TaskApi {
 
     @PostMapping
     public ResponseEntity<?> createTask(@RequestBody @Valid TaskCreateRequest taskCreateRequest,
-                                        BindingResult bindingResult) {
+                                        BindingResult bindingResult,
+                                        Principal connectedUser) {
         if (bindingResult.hasErrors()) {
             String errorsMessage = returnErrorsToClient(bindingResult);
             return ResponseEntity
@@ -86,7 +89,7 @@ public class TaskController implements TaskApi {
         }
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(taskService.createTask(taskCreateRequest));
+                .body(taskService.createTask(taskCreateRequest, connectedUser));
     }
 
     @PostMapping("/{id}/comments")

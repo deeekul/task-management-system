@@ -78,7 +78,8 @@ public interface TaskApi {
     })
     @Operation(summary = "Получить задачу по идентификатору")
     ResponseEntity<TaskResponse> getTaskById(
-            @Parameter(description = "Идентификатор пользователя") Long id);
+            @Parameter(description = "Идентификатор пользователя") Long id,
+            Principal connectedUser);
 
     @ApiResponses(value = {
             @ApiResponse(
@@ -210,7 +211,8 @@ public interface TaskApi {
     @Operation(summary = "Создать новую задачу")
     ResponseEntity<?> createTask(
             @RequestBody(description = "Параметры для создания задачи") @Valid TaskCreateRequest taskCreateRequest,
-            BindingResult bindingResult);
+            BindingResult bindingResult,
+            Principal connectedUser);
 
     @ApiResponses(value = {
             @ApiResponse(

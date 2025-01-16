@@ -13,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
-import ru.vsu.cs.taskmanagementsystem.user.adapter.jpa.entity.User;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 import static ru.vsu.cs.taskmanagementsystem.security.entity.Role.ADMIN;
@@ -49,24 +48,24 @@ public class SecurityConfig {
                                 .requestMatchers(UNRESTRICTED_URLS)
                                 .permitAll()
                                 .requestMatchers(HttpMethod.GET,"/api/users", "/api/users/**")
-                                .hasAnyRole(ADMIN.name(), USER.name())
+                                .hasAnyAuthority(ADMIN.name(), USER.name())
                                 .requestMatchers(HttpMethod.PATCH,"/api/users/change-password")
-                                .hasAnyRole(ADMIN.name(), USER.name())
+                                .hasAnyAuthority(ADMIN.name(), USER.name())
                                 .requestMatchers(HttpMethod.DELETE, "/api/users/{id}")
-                                .hasRole(ADMIN.name())
+                                .hasAuthority(ADMIN.name())
 
                                 .requestMatchers(HttpMethod.GET, "/api/tasks", "api/tasks/{id}")
-                                .hasAnyRole(ADMIN.name(), USER.name())// TODO не работают роли, исправить и протестить
-//                                .requestMatchers(HttpMethod.GET, "/api/tasks/**")
-//                                .hasRole(ADMIN.name())
-//                                .requestMatchers(HttpMethod.POST, "/api/tasks/{id}/comments")
-//                                .hasAnyRole(ADMIN.name(), USER.name())
-//                                .requestMatchers(HttpMethod.POST, "/api/tasks")
-//                                .hasRole(ADMIN.name())
-//                                .requestMatchers(HttpMethod.POST, "/api/tasks/{id}")
-//                                .hasAnyRole(ADMIN.name(), USER.name())
-//                                .requestMatchers(HttpMethod.DELETE, "/api/tasks/{id}")
-//                                .hasRole(ADMIN.name())
+                                .hasAnyAuthority(ADMIN.name(), USER.name())
+                                .requestMatchers(HttpMethod.GET, "/api/tasks/**")
+                                .hasAuthority(ADMIN.name())
+                                .requestMatchers(HttpMethod.POST, "/api/tasks/{id}/comments")
+                                .hasAnyAuthority(ADMIN.name(), USER.name())
+                                .requestMatchers(HttpMethod.POST, "/api/tasks")
+                                .hasAuthority(ADMIN.name())
+                                .requestMatchers(HttpMethod.POST, "/api/tasks/{id}")
+                                .hasAnyAuthority(ADMIN.name(), USER.name())
+                                .requestMatchers(HttpMethod.DELETE, "/api/tasks/{id}")
+                                .hasAuthority(ADMIN.name())
                                 .anyRequest()
                                 .authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
