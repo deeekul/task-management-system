@@ -18,8 +18,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.jpa.enitity.temp.TaskPriority;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.jpa.enitity.temp.TaskStatus;
+import ru.vsu.cs.taskmanagementsystem.task.adapter.rest.dto.request.AdminTaskUpdateRequest;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.rest.dto.request.TaskCreateRequest;
-import ru.vsu.cs.taskmanagementsystem.task.adapter.rest.dto.request.TaskUpdateRequest;
+import ru.vsu.cs.taskmanagementsystem.task.adapter.rest.dto.request.UserTaskUpdateRequest;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.rest.dto.response.TaskResponse;
 import ru.vsu.cs.taskmanagementsystem.task.comment.adapter.rest.dto.request.CommentRequest;
 import ru.vsu.cs.taskmanagementsystem.user.adapter.rest.dto.response.UserResponse;
@@ -103,7 +104,7 @@ public interface TaskApi {
                     }
             )
     })
-    @Operation(summary = "Получить задачу по заголовку")
+    @Operation(summary = "Получить задачу по названию заголовка")
     ResponseEntity<TaskResponse> getTaskByTitle(
             @Parameter(description = "Заголовок задачи", required = true)
             @RequestParam(value = "title") String title);
@@ -143,7 +144,8 @@ public interface TaskApi {
             @RequestParam(value = "pageNumber", defaultValue = "0") @Min(0) Integer pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "10") @Min(1) Integer pageSize,
             @RequestParam(value = "status", required = false) TaskStatus status,
-            @RequestParam(value = "priority", required = false) TaskPriority priority
+            @RequestParam(value = "priority", required = false) TaskPriority priority,
+            Principal connectedUser
     );
 
     @ApiResponses(value = {
@@ -181,7 +183,8 @@ public interface TaskApi {
             @RequestParam(value = "pageNumber", defaultValue = "0") @Min(0) Integer pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "10") @Min(1) Integer pageSize,
             @RequestParam(value = "status", required = false) TaskStatus status,
-            @RequestParam(value = "priority", required = false) TaskPriority priority
+            @RequestParam(value = "priority", required = false) TaskPriority priority,
+            Principal connectedUser
     );
 
     @ApiResponses(value = {
@@ -269,10 +272,41 @@ public interface TaskApi {
                     }
             )
     })
-    @Operation(summary = "Обновление задачи по идентификатору")
-    ResponseEntity<?> updateTaskById(
+    @Operation(summary = "Обновить задачу пользователем по идентификатору")
+    ResponseEntity<?> updateUserTaskById(
             @Parameter(description = "Идентификатор задачи") Long id,
-            @RequestBody(description = "Параметры для обновления задачи") @Valid TaskUpdateRequest taskUpdateRequest,
+            @RequestBody(description = "Параметры для обновления задачи")
+            @Valid UserTaskUpdateRequest request,
+            BindingResult bindingResult,
+            Principal connectedUser);
+
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Успешное обновление задачи",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = TaskResponse.class)
+                            )
+                    }
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Задача по указанному идентификатору не найдена",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessage.class)
+                            )
+                    }
+            )
+    })
+    @Operation(summary = "Обновить задачу администратором по идентификатору")
+    ResponseEntity<?> updateAdminTaskById(
+            @Parameter(description = "Идентификатор задачи") Long id,
+            @RequestBody(description = "Параметры для обновления задачи")
+            @Valid AdminTaskUpdateRequest request,
             BindingResult bindingResult,
             Principal connectedUser);
 
@@ -298,6 +332,6 @@ public interface TaskApi {
                     }
             )
     })
-    @Operation(summary = "Удаление задачи по идентификатору")
+    @Operation(summary = "Удалить задачи по идентификатору")
     ResponseEntity<Void> deleteTaskById(@Parameter(description = "Идентификатор задачи") Long id);
 }

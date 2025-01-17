@@ -13,14 +13,16 @@ import ru.vsu.cs.taskmanagementsystem.task.adapter.jpa.TaskRepository;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.jpa.enitity.Task;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.jpa.enitity.temp.TaskPriority;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.jpa.enitity.temp.TaskStatus;
+import ru.vsu.cs.taskmanagementsystem.task.adapter.rest.dto.request.AdminTaskUpdateRequest;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.rest.dto.request.TaskCreateRequest;
-import ru.vsu.cs.taskmanagementsystem.task.adapter.rest.dto.request.TaskUpdateRequest;
+import ru.vsu.cs.taskmanagementsystem.task.adapter.rest.dto.request.UserTaskUpdateRequest;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.rest.dto.response.TaskResponse;
 import ru.vsu.cs.taskmanagementsystem.task.comment.adapter.jpa.CommentRepository;
 import ru.vsu.cs.taskmanagementsystem.task.comment.adapter.jpa.entity.Comment;
 import ru.vsu.cs.taskmanagementsystem.task.comment.adapter.rest.dto.request.CommentRequest;
 import ru.vsu.cs.taskmanagementsystem.task.exception.TaskNotFoundException;
 import ru.vsu.cs.taskmanagementsystem.task.exception.UnauthorizedTaskAccessException;
+import ru.vsu.cs.taskmanagementsystem.task.util.TaskAccessValidator;
 import ru.vsu.cs.taskmanagementsystem.user.UserService;
 import ru.vsu.cs.taskmanagementsystem.user.adapter.UserMapper;
 import ru.vsu.cs.taskmanagementsystem.user.adapter.jpa.entity.User;
@@ -36,11 +38,13 @@ public class TaskService {
 
     private final CommentRepository commentRepository;
 
+    private final UserService userService;
+
     private final TaskMapper taskMapper;
 
     private final UserMapper userMapper;
 
-    private final UserService userService;
+    private final TaskAccessValidator taskAccessValidator;
 
     public Page<TaskResponse> getAllTasks(TaskStatus status, TaskPriority priority, Pageable pageable) {
         return taskRepository.findAll(status, priority, pageable)
@@ -50,20 +54,27 @@ public class TaskService {
     public TaskResponse getTaskById(Long taskId, Principal connectedUser) {
         var task = findTaskByIdOrThrowException(taskId);
         var user = getUserFromPrincipal(connectedUser);
-        checkTaskAccess(task, user);
+        taskAccessValidator.checkUserAccess(task, user);
+
         return taskMapper.map(task);
     }
 
-    public Page<TaskResponse> getAllTasksByAuthorId(Long authorId, TaskStatus status,
-                                                    TaskPriority priority, Pageable pageable) {
-        userService.getUserById(authorId);
+    public Page<TaskResponse> getAllTasksByAuthorId(Long authorId, TaskStatus status, TaskPriority priority,
+                                                    Pageable pageable, Principal connectedUser) {
+        userService.getUserById(authorId); // Проверка на существование автора
+        var user = getUserFromPrincipal(connectedUser);
+        taskAccessValidator.checkUserAccess(authorId, user);
+
         return taskRepository.findAllByAuthorId(authorId, status, priority, pageable)
                 .map(taskMapper::map);
     }
 
-    public Page<TaskResponse> getAllTasksByAssigneeId(Long assigneeId, TaskStatus status,
-                                                      TaskPriority priority, Pageable pageable) {
-        userService.getUserById(assigneeId);
+    public Page<TaskResponse> getAllTasksByAssigneeId(Long assigneeId, TaskStatus status, TaskPriority priority,
+                                                      Pageable pageable, Principal connectedUser) {
+        userService.getUserById(assigneeId); // Проверка на существование исполнителя
+        var user = getUserFromPrincipal(connectedUser);
+        taskAccessValidator.checkUserAccess(assigneeId, user);
+
         return taskRepository.findAllByAssigneeId(assigneeId, status, priority, pageable)
                 .map(taskMapper::map);
     }
@@ -107,28 +118,29 @@ public class TaskService {
 
         task.addComment(comment);
         taskRepository.save(task);
-
         return taskMapper.map(task);
     }
 
     @Transactional
-    public TaskResponse updateTaskById(Long id, TaskUpdateRequest taskUpdateRequest, Principal connectedUser) {
+    public TaskResponse updateUserTaskById(Long id, UserTaskUpdateRequest userUpdateRequest,
+                                           Principal connectedUser) {
         var task = findTaskByIdOrThrowException(id);
         var user = getUserFromPrincipal(connectedUser);
 
         checkTaskAccess(task, user);
-        updateTaskFields(task, taskUpdateRequest);
-
-        taskRepository.save(task);
+        if (userUpdateRequest.status() != null) {
+            task.setStatus(userUpdateRequest.status());
+        }
+        if (userUpdateRequest.comment() != null) {
+            addCommentToTask(task.getId(), userUpdateRequest.comment(), connectedUser);
+        }
         return taskMapper.map(task);
     }
 
-    public void deleteTaskById(Long id) {
+    @Transactional
+    public TaskResponse updateAdminTaskById(Long id, AdminTaskUpdateRequest request,
+                                            Principal connectedUser) {
         var task = findTaskByIdOrThrowException(id);
-        taskRepository.delete(task);
-    }
-
-    private void updateTaskFields(Task task, TaskUpdateRequest request) {
         if (request.title() != null) {
             task.setTitle(request.title());
         }
@@ -145,6 +157,15 @@ public class TaskService {
             var newAssignee = userMapper.map(userService.getUserById(request.assigneeId()));
             task.setAssignee(newAssignee);
         }
+        if (request.comment() != null) {
+            addCommentToTask(task.getId(), request.comment(), connectedUser);
+        }
+        return taskMapper.map(task);
+    }
+
+    public void deleteTaskById(Long id) {
+        var task = findTaskByIdOrThrowException(id);
+        taskRepository.delete(task);
     }
 
     private User getUserFromPrincipal(Principal connectedUser) {

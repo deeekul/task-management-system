@@ -13,8 +13,9 @@ import ru.vsu.cs.taskmanagementsystem.task.TaskService;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.jpa.enitity.temp.TaskPriority;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.jpa.enitity.temp.TaskStatus;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.rest.api.TaskApi;
+import ru.vsu.cs.taskmanagementsystem.task.adapter.rest.dto.request.AdminTaskUpdateRequest;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.rest.dto.request.TaskCreateRequest;
-import ru.vsu.cs.taskmanagementsystem.task.adapter.rest.dto.request.TaskUpdateRequest;
+import ru.vsu.cs.taskmanagementsystem.task.adapter.rest.dto.request.UserTaskUpdateRequest;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.rest.dto.response.TaskResponse;
 import ru.vsu.cs.taskmanagementsystem.task.comment.adapter.rest.dto.request.CommentRequest;
 import ru.vsu.cs.taskmanagementsystem.util.ErrorMessage;
@@ -43,8 +44,7 @@ public class TaskController implements TaskApi {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TaskResponse> getTaskById(@PathVariable("id") Long id,
-                                                    Principal connectedUser) {
+    public ResponseEntity<TaskResponse> getTaskById(@PathVariable("id") Long id, Principal connectedUser) {
         return ok(taskService.getTaskById(id, connectedUser));
     }
 
@@ -59,10 +59,11 @@ public class TaskController implements TaskApi {
             @RequestParam(value = "pageNumber", defaultValue = "0") @Min(0) Integer pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "10") @Min(1) Integer pageSize,
             @RequestParam(value = "status", required = false) TaskStatus status,
-            @RequestParam(value = "priority", required = false) TaskPriority priority
+            @RequestParam(value = "priority", required = false) TaskPriority priority,
+            Principal connectedUser
     ) {
         var pageRequest = PageRequest.of(pageNumber, pageSize);
-        return ok(taskService.getAllTasksByAuthorId(id, status, priority, pageRequest));
+        return ok(taskService.getAllTasksByAuthorId(id, status, priority, pageRequest, connectedUser));
     }
 
     @GetMapping("/assignee/{id}")
@@ -71,10 +72,11 @@ public class TaskController implements TaskApi {
             @RequestParam(value = "pageNumber", defaultValue = "0") @Min(0) Integer pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "10") @Min(1) Integer pageSize,
             @RequestParam(value = "status", required = false) TaskStatus status,
-            @RequestParam(value = "priority", required = false) TaskPriority priority
+            @RequestParam(value = "priority", required = false) TaskPriority priority,
+            Principal connectedUser
     ) {
         var pageRequest = PageRequest.of(pageNumber, pageSize);
-        return ok(taskService.getAllTasksByAssigneeId(id, status, priority, pageRequest));
+        return ok(taskService.getAllTasksByAssigneeId(id, status, priority, pageRequest, connectedUser));
     }
 
     @PostMapping
@@ -108,18 +110,32 @@ public class TaskController implements TaskApi {
         return ok(taskService.addCommentToTask(id, commentRequest, connectedUser));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateTaskById(@PathVariable(("id")) Long id,
-                                            @RequestBody @Valid TaskUpdateRequest taskUpdateRequest,
-                                            BindingResult bindingResult,
-                                            Principal connectedUser) {
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updateUserTaskById(@PathVariable(("id")) Long id,
+                                                @RequestBody @Valid UserTaskUpdateRequest request,
+                                                BindingResult bindingResult,
+                                                Principal connectedUser) {
         if (bindingResult.hasErrors()) {
             String errorsMessage = returnErrorsToClient(bindingResult);
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(new ErrorMessage(errorsMessage, 400));
         }
-        return ok(taskService.updateTaskById(id, taskUpdateRequest, connectedUser));
+        return ok(taskService.updateUserTaskById(id, request, connectedUser));
+    }
+
+    @PutMapping("/admin/{id}")
+    public ResponseEntity<?> updateAdminTaskById(@PathVariable(("id")) Long id,
+                                                 @RequestBody @Valid AdminTaskUpdateRequest request,
+                                                 BindingResult bindingResult,
+                                                 Principal connectedUser) {
+        if (bindingResult.hasErrors()) {
+            String errorsMessage = returnErrorsToClient(bindingResult);
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorMessage(errorsMessage, 400));
+        }
+        return ok(taskService.updateAdminTaskById(id, request, connectedUser));
     }
 
     @DeleteMapping("/{id}")

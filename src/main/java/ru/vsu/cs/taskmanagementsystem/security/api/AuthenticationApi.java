@@ -83,6 +83,6 @@ public interface AuthenticationApi {
             responseCode = "200",
             description = "Успешное обновление токена доступа"
     )
-    @Operation(summary = "Обновление токена доступа")
+    @Operation(summary = "Обновить токен доступа")
     void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException;
 }

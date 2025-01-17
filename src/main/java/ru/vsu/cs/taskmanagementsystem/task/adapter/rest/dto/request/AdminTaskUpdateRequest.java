@@ -6,9 +6,13 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.jpa.enitity.temp.TaskPriority;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.jpa.enitity.temp.TaskStatus;
+import ru.vsu.cs.taskmanagementsystem.task.comment.adapter.rest.dto.request.CommentRequest;
 
 @Builder
-public record TaskUpdateRequest(
+public record AdminTaskUpdateRequest(
+
+        @Schema(description = "Идентификатор задачи", example = "1")
+        Long id,
 
         @Size(min = 3, max = 100, message = "Название задачи должно содержать от 3 до 100 символов")
         @Schema(description = "Название задачи", example = "Разработать новую функцию поиска")
@@ -26,6 +30,9 @@ public record TaskUpdateRequest(
 
         @Min(value = 1, message = "Идентификатор исполнителя должен быть положительным")
         @Schema(description = "Идентификатор нового исполнителя", example = "2")
-        Long assigneeId
+        Long assigneeId,
+
+        @Schema(description = "Комментарий к задаче")
+        CommentRequest comment
 ) {
 }
