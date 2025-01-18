@@ -23,7 +23,6 @@ import ru.vsu.cs.taskmanagementsystem.task.adapter.rest.dto.request.TaskCreateRe
 import ru.vsu.cs.taskmanagementsystem.task.adapter.rest.dto.request.UserTaskUpdateRequest;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.rest.dto.response.TaskResponse;
 import ru.vsu.cs.taskmanagementsystem.task.comment.adapter.rest.dto.request.CommentRequest;
-import ru.vsu.cs.taskmanagementsystem.user.adapter.rest.dto.response.UserResponse;
 import ru.vsu.cs.taskmanagementsystem.util.ErrorMessage;
 
 import java.security.Principal;
@@ -89,7 +88,7 @@ public interface TaskApi {
                     content = {
                             @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = UserResponse.class)
+                                    schema = @Schema(implementation = TaskResponse.class)
                             )
                     }
             ),

@@ -47,8 +47,8 @@ public class TaskService {
     private final TaskAccessValidator taskAccessValidator;
 
     public Page<TaskResponse> getAllTasks(TaskStatus status, TaskPriority priority, Pageable pageable) {
-        return taskRepository.findAll(status, priority, pageable)
-                .map(taskMapper::map);
+        var taskPage = taskRepository.findAll(status, priority, pageable);
+        return taskPage.map(taskMapper::map);
     }
 
     public TaskResponse getTaskById(Long taskId, Principal connectedUser) {
@@ -65,8 +65,8 @@ public class TaskService {
         var user = getUserFromPrincipal(connectedUser);
         taskAccessValidator.checkUserAccess(authorId, user);
 
-        return taskRepository.findAllByAuthorId(authorId, status, priority, pageable)
-                .map(taskMapper::map);
+        var taskPage = taskRepository.findAllByAuthorId(authorId, status, priority, pageable);
+        return taskPage.map(taskMapper::map);
     }
 
     public Page<TaskResponse> getAllTasksByAssigneeId(Long assigneeId, TaskStatus status, TaskPriority priority,
@@ -75,8 +75,8 @@ public class TaskService {
         var user = getUserFromPrincipal(connectedUser);
         taskAccessValidator.checkUserAccess(assigneeId, user);
 
-        return taskRepository.findAllByAssigneeId(assigneeId, status, priority, pageable)
-                .map(taskMapper::map);
+        var taskPage = taskRepository.findAllByAssigneeId(assigneeId, status, priority, pageable);
+        return taskPage.map(taskMapper::map);
     }
 
     public TaskResponse getTaskByTitle(String title) {

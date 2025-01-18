@@ -2,13 +2,12 @@ package ru.vsu.cs.taskmanagementsystem.task.adapter.rest.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
-import ru.vsu.cs.taskmanagementsystem.task.comment.adapter.rest.dto.response.CommentResponse;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.jpa.enitity.temp.TaskPriority;
 import ru.vsu.cs.taskmanagementsystem.task.adapter.jpa.enitity.temp.TaskStatus;
+import ru.vsu.cs.taskmanagementsystem.task.comment.adapter.rest.dto.response.CommentResponse;
 import ru.vsu.cs.taskmanagementsystem.user.adapter.rest.dto.response.UserResponse;
 
 import java.util.List;
-
 
 @Builder
 public record TaskResponse(

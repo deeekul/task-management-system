@@ -11,7 +11,8 @@ import ru.vsu.cs.taskmanagementsystem.user.adapter.jpa.entity.User;
 public class TaskAccessValidator {
 
     public void checkUserAccess(Task task, User connectedUser) {
-        if (!connectedUser.getRole().equals(Role.ADMIN) && !task.getAssignee().getId().equals(connectedUser.getId())) {
+        if (!connectedUser.getRole().equals(Role.ADMIN) && !task.getAssignee().getId().equals(connectedUser.getId())
+                && !task.getAuthor().getId().equals(connectedUser.getId())) {
             throw new UnauthorizedTaskAccessException(
                     "Вы не имеете доступа к этой задаче!", HttpStatus.FORBIDDEN);
         }

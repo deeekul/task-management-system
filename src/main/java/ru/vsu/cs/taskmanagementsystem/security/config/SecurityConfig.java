@@ -52,11 +52,11 @@ public class SecurityConfig {
                                 .hasAnyAuthority(ADMIN.name(), USER.name())
                                 .requestMatchers(HttpMethod.DELETE, "/api/users/{id}")
                                 .hasAuthority(ADMIN.name())
-                                .requestMatchers(HttpMethod.GET, "api/tasks/{id}",
+                                .requestMatchers(HttpMethod.GET, "/api/tasks", "/api/tasks/title")
+                                .hasAuthority(ADMIN.name())
+                                .requestMatchers(HttpMethod.GET, "/api/tasks/{id}",
                                         "/api/tasks/assignee/{id}", "/api/tasks/author/{id}")
                                 .hasAnyAuthority(ADMIN.name(), USER.name())
-                                .requestMatchers(HttpMethod.GET, "/api/tasks", "/api/tasks/**")
-                                .hasAuthority(ADMIN.name())
                                 .requestMatchers(HttpMethod.POST, "/api/tasks/{id}/comments")
                                 .hasAnyAuthority(ADMIN.name(), USER.name())
                                 .requestMatchers(HttpMethod.POST, "/api/tasks")
