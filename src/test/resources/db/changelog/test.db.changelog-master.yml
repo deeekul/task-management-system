@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changeset/create_table_users.sql
+  - include:
+      file: db/changelog/changeset/create_table_tokens.sql
+  - include:
+      file: db/changelog/changeset/create_table_tasks.sql
+  - include:
+      file: db/changelog/changeset/create_table_comments.sql
